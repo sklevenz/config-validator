@@ -1,0 +1,21 @@
+---
+config:
+  metrics:
+    retention_policy: 30d
+    shard_duration: 1d
+
+  persistent_disk: 51_200
+
+  mailer:
+    from: hcp-aws-dev03@exchange.corp
+    smtp_port: 25
+    smtp_server: mail.dmz.corp
+    to:
+    - "cf.ops-staging@listserv.corp"
+
+test:
+  test:
+
+I_am_obsolete:
+  a: 1
+  b: 2
