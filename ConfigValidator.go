@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	app = kingpin.New("ocv", "A validation tool for operation configuration")
+	app = kingpin.New("ocv", "A validation tool for yaml configuration")
 
 	showCmd        = app.Command("show", "Show schema definition")
 	showSchemaFile = showCmd.Arg("schema", "Absolute file name to a schema yaml file").Required().ExistingFile()
@@ -23,6 +23,8 @@ var (
 	validateCmd           = app.Command("validate", "Validate schema definition")
 	validationSchemaFile  = validateCmd.Arg("schema", "Absolute file name to a schema yaml file").Required().ExistingFile()
 	validationConfigFiles = validateCmd.Arg("config", "Absolute file names to a configuration yaml files").Required().ExistingFiles()
+
+	errorCode = 0
 )
 
 type anonymousMap map[interface{}]interface{}
@@ -185,6 +187,7 @@ func validateRequiredProperties(schema *SchemaType, config *[]anonymousMap, resu
 
 			if property.Annotations.hasAnnotation(required) {
 				validationResult.Status = flaw
+				errorCode = 1
 			} else {
 				validationResult.Status = valid
 			}
@@ -216,6 +219,7 @@ func validateObsoleteProperties(schema *SchemaType, config *[]anonymousMap, resu
 			validationResult.DefaultValue = nil
 			validationResult.ActualValue = v
 			validationResult.Status = flaw
+			errorCode = 1
 			*result = append(*result, validationResult)
 
 		}
@@ -295,5 +299,7 @@ func main() {
 
 	if err != nil {
 		log.Fatalf("Error: %v", err)
+		os.Exit(1)
 	}
+	os.Exit(errorCode)
 }
