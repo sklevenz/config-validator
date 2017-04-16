@@ -53,27 +53,27 @@ var validationSchemaDocument = `
 schema:
   properties:
   - property: mandatory_valid
-    annotations: 
+    annotations:
     - required
     description: "description"
     default: 123
   - property: mandatory_missing
-    annotations: 
+    annotations:
     - required
     description: "description"
     default: 123
   - property: optional_present
-    annotations: 
+    annotations:
     - optional
     descriptions: "description"
     default: 123
   - property: optional_missing
-    annotations: 
+    annotations:
     - optional
     description: "description"
     default: 123
   - property: deprecated_present
-    annotations: 
+    annotations:
     - deprecated
     description: "description"
     default: 123

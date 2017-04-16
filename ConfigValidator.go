@@ -18,7 +18,6 @@ var (
 	app = kingpin.New("ocv", "A validation tool for operation configuration")
 
 	showCmd        = app.Command("show", "Show schema definition")
-	showType       = showCmd.Flag("type", "Type of schema [all|properties|resources]").Short('t').Default("properties").String()
 	showSchemaFile = showCmd.Arg("schema", "Absolute file name to a schema yaml file").Required().ExistingFile()
 
 	validateCmd           = app.Command("validate", "Validate schema definition")
@@ -42,16 +41,9 @@ type PropertyType struct {
 	Description string
 }
 
-// ResourceType ...
-type ResourceType struct {
-	Path        string `yaml:"resource"`
-	Description string
-}
-
 // SchemaType ...
 type SchemaType struct {
 	Properties []PropertyType
-	Resources  []ResourceType
 }
 
 const (
@@ -84,18 +76,8 @@ func (n *showCommandStruct) run(c *kingpin.ParseContext) error {
 	data := readFile(*showSchemaFile)
 	schema := unmarshalSchema(&data)
 
-	switch *showType {
-	case "properties":
-		renderPropertiesSchema(schema.Properties, os.Stdout)
-	case "resources":
-		renderResourcesSchema(schema.Resources, os.Stdout)
-	case "all":
-		renderPropertiesSchema(schema.Properties, os.Stdout)
-		fmt.Print("\n\n")
-		renderResourcesSchema(schema.Resources, os.Stdout)
-	default:
-		app.UsageForContext(c)
-	}
+	renderPropertiesSchema(schema.Properties, os.Stdout)
+	fmt.Print("\n\n")
 
 	return nil
 }
@@ -145,20 +127,6 @@ func renderValidationResult(validationResults []ValidationResultType, writer io.
 	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
 	for _, result := range validationResults {
 		table.Append([]string{result.PropertyName, fmt.Sprint(result.Annotations), string(result.Provided), string(result.Status), fmt.Sprint(result.DefaultValue), fmt.Sprint(result.ActualValue)})
-	}
-	table.Render()
-}
-
-func renderResourcesSchema(resources []ResourceType, writer io.Writer) {
-	table := tablewriter.NewWriter(writer)
-	table.SetColWidth(80)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-	table.SetCenterSeparator("|")
-	table.SetHeader([]string{"Resource", "Description"})
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	for _, entry := range resources {
-		table.Append([]string{entry.Path, entry.Description})
 	}
 	table.Render()
 }
@@ -315,8 +283,7 @@ func (m anonymousMap) containsKey(key string) (interface{}, bool) {
 }
 
 func main() {
-	app.Version("0.1").Author("SAP SE")
-	kingpin.CommandLine.HelpFlag.Short('h') // not working
+	app.Version("0.1")
 
 	showCommand := &showCommandStruct{}
 	showCmd.Action(showCommand.run)

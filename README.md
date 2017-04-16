@@ -18,13 +18,8 @@ go run ConfigValidator.go help show
 go run ConfigValidator.go help validate
 
 go run ./ConfigValidator.go show resources/schema.yml
-go run ./ConfigValidator.go show -t all resources/schema.yml
-go run ./ConfigValidator.go show -t properties resources/schema.yml
-go run ./ConfigValidator.go show -t resources resources/schema.yml
 
 go run ./ConfigValidator.go validate resources/schema.yml resources/config.yml resources/credentials.yml
-
-
 ```
 
 # help
