@@ -17,9 +17,9 @@ go test
 go run ConfigValidator.go help show
 go run ConfigValidator.go help validate
 
-go run ./ConfigValidator.go show resources/schema.yml
+go run ./ConfigValidator.go show examples/schema.yml
 
-go run ./ConfigValidator.go validate resources/schema.yml resources/config.yml resources/credentials.yml
+go run ./ConfigValidator.go validate examples/schema.yml examples/config.yml examples/credentials.yml
 ```
 
 # help
@@ -54,7 +54,6 @@ Show schema definition
 Flags:
   --help               Show context-sensitive help (also try --help-long and --help-man).
   --version            Show application version.
-  --type="properties"  Type of schema [all|properties|resources]
 
 Args:
   <schema>  Absolute file name to a schema yaml file
