@@ -1,83 +1,84 @@
 ---
 schema:
-  properties:
-  - property: config.metrics.retention_policy
-    annotations:
-    - required
-    description: "The retention policy is the period of time that data will be kept around in influxdb"
-    default: 30d
-  - property: config.metrics.shard_duration
-    annotations:
-    - required
-    description: "The amount of time influxdb data is kept after that is determined by the shard duration"
-    default: 1d
-  - property: config.persistent_disk
-    annotations:
-    - required
-    description: "Size of persistent disc for influxdb"
-    default: 51_200
-  - property: config.mailer.from
-    annotations:
-    - required
-    description: "From field of alert emails"
-    default: CHANGE_ME
-  - property: config.mailer.smtp_port
-    annotations:
-    - required
-    description: "Email server port"
-    default: 25
-  - property: config.mailer.smtp_server
-    annotations:
-    - required
-    description: "Email server address"
-    default: CHANGE_ME
-  - property: config.mailer.to
-    annotations:
-    - required
-    description: "Recipients of alert emails"
-    default:
-      - "CHANGE_ME"
-      - "CHANGE_ME"
-      - ...
-  - property: credentials.metrics.user
-    annotations:
-    - required
-    description: "Influxdb user"
-    default: admin
-  - property: credentials.metrics.password
-    annotations:
-    - required
-    description: "Influxdb password"
-    default: abcd1234
-  - property: credentials.metrics.root_password_old
-    annotations:
-    - required
-    description: "For influxdb password change see howto documentation"
-    default: abcd1234
-  - property: credentials.metrics.root_password_new
-    annotations:
-    - required
-    description: "For influxdb password change see howto documentation"
-    default: abcd1234
-
-  - property: xxxx
-    annotations:
-    - required
-    description: "xxxx"
-    default: xxx
-  - property: yyyy
-    annotations:
-    - optional
-    description: "yyyy"
-    default: yyy
-  - property: zzzz
-    annotations:
-    - deprecated
-    description: "zzzz"
-    default: zzz
-  - property: uuuu
-    annotations:
-    - deprecated
-    - optional
-    description: "uuuu"
-    default: uuu
+  - group: config
+    - property: config.metrics.retention_policy
+      annotations:
+      - required
+      description: "The retention policy is the period of time that data will be kept around in influxdb"
+      default: 30d
+    - property: config.metrics.shard_duration
+      annotations:
+      - required
+      description: "The amount of time influxdb data is kept after that is determined by the shard duration"
+      default: 1d
+    - property: config.persistent_disk
+      annotations:
+      - required
+      description: "Size of persistent disc for influxdb"
+      default: 51_200
+    - property: config.mailer.from
+      annotations:
+      - required
+      description: "From field of alert emails"
+      default: CHANGE_ME
+    - property: config.mailer.smtp_port
+      annotations:
+      - required
+      description: "Email server port"
+      default: 25
+    - property: config.mailer.smtp_server
+      annotations:
+      - required
+      description: "Email server address"
+      default: CHANGE_ME
+    - property: config.mailer.to
+      annotations:
+      - required
+      description: "Recipients of alert emails"
+      default:
+        - "CHANGE_ME"
+        - "CHANGE_ME"
+        - ...
+  - group: credentials
+    - property: credentials.metrics.user
+      annotations:
+      - required
+      description: "Influxdb user"
+      default: admin
+    - property: credentials.metrics.password
+      annotations:
+      - required
+      description: "Influxdb password"
+      default: abcd1234
+    - property: credentials.metrics.root_password_old
+      annotations:
+      - required
+      description: "For influxdb password change see howto documentation"
+      default: abcd1234
+    - property: credentials.metrics.root_password_new
+      annotations:
+      - required
+      description: "For influxdb password change see howto documentation"
+      default: abcd1234
+  - group: test
+    - property: xxxx
+      annotations:
+      - required
+      description: "xxxx"
+      default: xxx
+    - property: yyyy
+      annotations:
+      - optional
+      description: "yyyy"
+      default: yyy
+    - property: zzzz
+      annotations:
+      - deprecated
+      description: "zzzz"
+      default: zzz
+    - property: uuuu
+      annotations:
+      - deprecated
+      - optional
+      description: "uuuu"
+      default: uuu

@@ -1,0 +1,8 @@
+---
+schema:
+  config:
+    - property: config.metrics.retention_policy
+      annotations:
+      - required
+      description: "The retention policy is the period of time that data will be kept around in influxdb"
+      default: 30d

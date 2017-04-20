@@ -74,3 +74,16 @@ Args:
   <config>  Absolute file names to a configuration yaml files
 
 ```
+
+# Schema
+
+```
+---
+schema:					# schema definition
+  group: <name>			# properties group
+  - property: <name>	# e.g. config.metrics.retention_policy
+    annotations:
+    - required
+    description: <string>
+    default: <value>
+```

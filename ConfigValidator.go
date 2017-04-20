@@ -9,9 +9,9 @@ import (
 	"reflect"
 	"strings"
 
-	"gopkg.in/yaml.v2"
 	"github.com/olekukonko/tablewriter"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -43,9 +43,14 @@ type PropertyType struct {
 	Description string
 }
 
+// GroupType ...
+type GroupType struct {
+	Properties []PropertyType
+}
+
 // SchemaType ...
 type SchemaType struct {
-	Properties []PropertyType
+	Groups map[string]GroupType
 }
 
 const (
@@ -78,7 +83,7 @@ func (n *showCommandStruct) run(c *kingpin.ParseContext) error {
 	data := readFile(*showSchemaFile)
 	schema := unmarshalSchema(&data)
 
-	renderPropertiesSchema(schema.Properties, os.Stdout)
+	renderPropertiesSchema(schema.Groups, os.Stdout)
 	fmt.Print("\n\n")
 
 	return nil
@@ -102,10 +107,13 @@ func unmarshalSchema(data *[]byte) *SchemaType {
 		log.Fatalf("Error: %v", err)
 	}
 	schema := tmp.TmpSchema
+
+	fmt.Printf("\n\n%v\n\n", schema)
+
 	return &schema
 }
 
-func renderPropertiesSchema(properties []PropertyType, writer io.Writer) {
+func renderPropertiesSchema(groups map[string]GroupType, writer io.Writer) {
 	table := tablewriter.NewWriter(writer)
 	table.SetColWidth(80)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
@@ -113,8 +121,10 @@ func renderPropertiesSchema(properties []PropertyType, writer io.Writer) {
 	table.SetCenterSeparator("|")
 	table.SetHeader([]string{"Property", "Default", "Annotations", "Description"})
 	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	for _, entry := range properties {
-		table.Append([]string{entry.Name, fmt.Sprint(entry.Default), fmt.Sprint(entry.Annotations), entry.Description})
+	for _, group := range groups {
+		for _, entry := range group.Properties {
+			table.Append([]string{entry.Name, fmt.Sprint(entry.Default), fmt.Sprint(entry.Annotations), entry.Description})
+		}
 	}
 	table.Render()
 }
@@ -159,39 +169,41 @@ func (annotations annotationsType) hasAnnotation(annotation annotationType) bool
 }
 
 func validateRequiredProperties(schema *SchemaType, config *[]anonymousMap, result *[]ValidationResultType) {
-	for _, property := range schema.Properties {
-		found := false
-		validationResult := ValidationResultType{}
-		validationResult.PropertyName = property.Name
+	for _, group := range schema.Groups {
+		for _, property := range group.Properties {
+			found := false
+			validationResult := ValidationResultType{}
+			validationResult.PropertyName = property.Name
 
-		validationResult.Annotations = property.Annotations
-		validationResult.DefaultValue = property.Default
+			validationResult.Annotations = property.Annotations
+			validationResult.DefaultValue = property.Default
 
-		for _, configMap := range *config {
-			val, ok := configMap.containsKey(property.Name)
+			for _, configMap := range *config {
+				val, ok := configMap.containsKey(property.Name)
 
-			if ok {
-				found = true
-				validationResult.ActualValue = val
-				validationResult.Provided = provided
-				validationResult.Status = valid
+				if ok {
+					found = true
+					validationResult.ActualValue = val
+					validationResult.Provided = provided
+					validationResult.Status = valid
 
+					*result = append(*result, validationResult)
+					break
+				}
+			}
+
+			if !found {
+				validationResult.ActualValue = nil
+				validationResult.Provided = missing
+
+				if property.Annotations.hasAnnotation(required) {
+					validationResult.Status = flaw
+					errorCode = 1
+				} else {
+					validationResult.Status = valid
+				}
 				*result = append(*result, validationResult)
-				break
 			}
-		}
-
-		if !found {
-			validationResult.ActualValue = nil
-			validationResult.Provided = missing
-
-			if property.Annotations.hasAnnotation(required) {
-				validationResult.Status = flaw
-				errorCode = 1
-			} else {
-				validationResult.Status = valid
-			}
-			*result = append(*result, validationResult)
 		}
 	}
 }
@@ -206,10 +218,12 @@ func validateObsoleteProperties(schema *SchemaType, config *[]anonymousMap, resu
 	}
 	for k, v := range allConfiguredProperties {
 		var found = false
-		for _, p := range schema.Properties {
-			if k == p.Name {
-				found = true
-				break
+		for _, g := range schema.Groups {
+			for _, p := range g.Properties {
+				if k == p.Name {
+					found = true
+					break
+				}
 			}
 		}
 		if !found {
