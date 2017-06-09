@@ -1,6 +1,6 @@
 ---
 schema:
-  - group: config
+  - config:
     - property: config.metrics.retention_policy
       annotations:
       - required
@@ -35,11 +35,8 @@ schema:
       annotations:
       - required
       description: "Recipients of alert emails"
-      default:
-        - "CHANGE_ME"
-        - "CHANGE_ME"
-        - ...
-  - group: credentials
+      default: ""
+  - credentials:
     - property: credentials.metrics.user
       annotations:
       - required
@@ -60,7 +57,7 @@ schema:
       - required
       description: "For influxdb password change see howto documentation"
       default: abcd1234
-  - group: test
+  - test:
     - property: xxxx
       annotations:
       - required

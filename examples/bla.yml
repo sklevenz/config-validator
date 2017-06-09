@@ -1,8 +1,24 @@
 ---
 schema:
-  config:
-    - property: config.metrics.retention_policy
+#  - property: p1
+#    annotations:
+#    - required
+#  - property: p2
+#    annotations:
+#    - required
+
+
+  - config:
+    - property: p2
       annotations:
       - required
-      description: "The retention policy is the period of time that data will be kept around in influxdb"
-      default: 30d
+  - credentials:
+    - property: p1
+      annotations:
+      - required
+
+
+
+
+
+
